@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	db "./db"
+	rutas "./rutas"
+)
 
 func main() {
-	fmt.Println("vim-go")
+	// Crear tablas de la base de datos si es que no existen
+	db.CrearTablas()
+	// Crear el servidor web
+	rutas.Init()
 }
