@@ -2,7 +2,6 @@ package rutas
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -48,20 +47,31 @@ func VerSoftware(w http.ResponseWriter, r *http.Request) {
 
 func CrearSoftware(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	r.ParseForm()
 	var software modelo.SoftwareItem
-	_ = json.NewDecoder(r.Body).Decode(&software)
-	fmt.Println(software)
-	// Insertar en la base
+	// Inicializar estructura de software
 	base := db.Conectar()
+	software.Name = r.FormValue("name")
+	software.Desc = r.FormValue("desc")
+	software.Image = r.FormValue("image")
+	software.Licence = r.FormValue("licence")
+	software.Git = r.FormValue("git")
+	software.Website = r.FormValue("website")
+	software.OS = r.FormValue("os")
 	software.CreatedAt = time.Now()
 	software.UpdatedAt = time.Now()
+	// TODO
+	// Arreglar esto para que tome el false
+	software.IsActive = false
+	// Insertar en la base de datos
 	nuevoSoftware := base.Insert(&software)
 	if nuevoSoftware != nil {
-		log.Printf("Error al insertar nuevo software a la base de datos. Error: %v", nuevoSoftware)
+		log.Printf("Error al insertar %s a la base de datos.", r.FormValue("name"))
+		log.Printf("Error: %v", nuevoSoftware)
 		db.Desconectar(base)
 		return
 	}
-	log.Printf("Nuevo software agregado con éxito...")
+	log.Printf("%s agregado con éxito.", r.FormValue("name"))
 	db.Desconectar(base)
 	// Respuesta del servidor
 	json.NewEncoder(w).Encode(&software)
