@@ -60,8 +60,6 @@ func CrearSoftware(w http.ResponseWriter, r *http.Request) {
 	software.OS = r.FormValue("os")
 	software.CreatedAt = time.Now()
 	software.UpdatedAt = time.Now()
-	// TODO
-	// Arreglar esto para que tome el false
 	software.IsActive = false
 	// Insertar en la base de datos
 	nuevoSoftware := base.Insert(&software)
